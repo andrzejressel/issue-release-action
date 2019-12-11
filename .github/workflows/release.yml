@@ -14,17 +14,16 @@ jobs:
       with:
         ref: master
 
+    - name: Package
+      run: |
+        npm install
+        npm run all
+
     - uses: ./
       id: version
       with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         users: 'jereksel'
-
-    - name: Package
-      if: steps.version.outputs.version
-      run: |
-        npm install
-        npm run all
 
     - name: Commit
       if: steps.version.outputs.version
