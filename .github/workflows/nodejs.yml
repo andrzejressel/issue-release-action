@@ -20,6 +20,6 @@ jobs:
     - name: Build & Test
       run: |
         npm install
-        npm run release
+        npm run all
       env:
         CI: true
