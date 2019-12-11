@@ -1,0 +1,19 @@
+name: 'Your name here'
+description: 'Provide a description here'
+author: 'Your name or organization here'
+inputs:
+  github-token:
+    description: The GitHub token used to create an authenticated client
+    required: true
+  users:
+    description: List of users permitted to deploy
+    required: false
+  status:
+    description: Output of job.status. Used in final invocation.
+    required: false
+outputs:
+  version:
+    description: Version number. If null deployment should be canceled (issue is not deployment, user does not have permission)
+runs:
+  using: 'node12'
+  main: 'dist/main/index.js'

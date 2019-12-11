@@ -1,0 +1,46 @@
+name: Tests
+
+on:
+  issues:
+    types: [opened]
+
+jobs:
+  greeting:
+    runs-on: ubuntu-latest
+    steps:
+
+    - name: Checkout
+      uses: actions/checkout@v1
+      with:
+        ref: master
+
+    - uses: ./
+      id: version
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        users: 'jereksel'
+
+    - name: Package
+      if: steps.version.outputs.version
+      run: |
+        npm install
+        npm run all
+
+    - name: Commit
+      if: steps.version.outputs.version
+      run: |
+        git config --global user.name "GitHub Actions"
+        git remote set-url origin https://x-access-token:$GITHUB_TOKEN@github.com/$GITHUB_REPOSITORY
+        git add --force dist/
+        git commit -m "Release $VERSION"
+        git tag -a "v$VERSION" -m "Version $VERSION"
+        git push origin "v$VERSION"
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        VERSION: ${{ steps.version.outputs.version }}
+
+    - uses: ./
+      if: always() && steps.version.outputs.version
+      with:
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+        status: "${{ job.status }}"
